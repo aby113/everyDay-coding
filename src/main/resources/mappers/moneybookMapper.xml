@@ -5,7 +5,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="org.moneybook.mapper.MoneybookMapper">
 
-
+	<select id="getCategory" resultType="categoryVO">
+	select * from category
+	</select>
 
 
 
