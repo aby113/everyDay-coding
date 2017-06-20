@@ -14,13 +14,12 @@ public class CategoryDAOImpl implements CategoryDAO {
 	@Inject
 	private SqlSession session;
 	
-	private String namespace = "org.moneybook.mapper.MoneybookMapper";
+	private String namespace = "org.moneybook.mapper.IncomeMapper";
 	
 	@Override
 	public List<CategoryVO> getCategory() throws Exception {
 		// TODO Auto-generated method stub
 		return session.selectList(namespace+".getCategory");
-		
 	}
 
 }

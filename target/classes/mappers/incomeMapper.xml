@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.moneybook.mapper.IncomeMapper">
+
+	<select id="getCategory" resultType="categoryVO">
+		select * from category
+	</select>
+
+<!-- 수익 작성 -->
+	<insert id="insertIncome" parameterType="incomeVO">
+		insert into income
+		(
+			regdate, item, revenue, cate_cd, mno, pay_code
+		) 
+		values
+		(#{regdate}, #{item}, #{revenue}, #{cate_cd}, #{mno}, #{pay_code})
+	</insert>
+
+<!-- 입력된 통계정보가 없을때 -->
+	<insert id="insertIcStat" parameterType="statisticsVO">
+	insert into statistics
+		(mno, year, month, inc_amount)
+	values
+		(#{mno}, #{year}, #{month}, #{inc_amount})	
+	</insert>
+
+<!-- 통계 업데이트 [현금]-->
+	<update id="updateIcStat" parameterType="statisticsVO">
+	update statistics
+	set
+		inc_amount = inc_amount + #{inc_amount}
+	where 
+		mno = #{mno} AND year = #{year} AND month = #{month}
+	</update>
+
+
+	
+
+
+
+
+
+</mapper>

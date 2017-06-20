@@ -4,6 +4,9 @@ public class CategoryVO {
 
 	private Integer cate_cd;
 	private String cate_name;
+	
+	
+	
 	public Integer getCate_cd() {
 		return cate_cd;
 	}

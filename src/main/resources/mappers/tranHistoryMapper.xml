@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.moneybook.mapper.TranHistoryMapper">
+
+	<!-- 해당 통계정보 존재여부 체크 -->
+	<select id="isStatistics" resultType="int" parameterType="statisticsVO">
+		SELECT mno FROM statistics
+		WHERE
+		mno = #{mno} AND year = #{year} AND month = #{month}
+	</select>
+
+	<!-- 수익 + 비용 리스트 페이징 쿼리 = 회원번호+criteria -->
+	<select id="getTranHistory" resultType="tranHistoryDTO" parameterType="map">
+		SELECT a.*, c.cate_name FROM
+		(
+			SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment,
+				revenue AS money, item, regdate
+			FROM income
+			WHERE mno = #{mno}
+									UNION ALL
+			SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate
+			FROM outlay
+			WHERE mno = #{mno}
+		) a, category c
+		WHERE a.cate_cd = c.cate_cd
+		ORDER BY a.regdate DESC, cate_cd ASC
+		LIMIT #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+
+<!-- 년도별 거래내역 = 회원번호+ 특정년도 + criteria -->
+	<select id="getYearTranHistory" parameterType="map" resultType="tranHistoryDTO">
+	SELECT a.*, c.cate_name FROM
+	(
+		SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment, revenue AS money
+		, item, regdate 
+		 FROM income
+		 WHERE mno = #{mno}
+									UNION ALL
+		SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
+		WHERE mno = #{mno}
+	) a, category c
+	WHERE a.cate_cd = c.cate_cd
+	AND  YEAR(regdate) = #{cri.year}
+	ORDER BY a.regdate DESC, cate_cd ASC
+		LIMIT #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+
+<!-- 월별 거래내역 -->
+	<select id="getMonthTranHistory" parameterType="map" resultType="tranHistoryDTO">
+		SELECT a.*, c.cate_name FROM
+		(
+			SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment,
+				revenue AS money, item, regdate
+			FROM income
+			WHERE mno = #{mno}
+									UNION ALL
+			SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate
+			FROM outlay
+			WHERE mno = #{mno}
+		) a, category c
+		WHERE a.cate_cd = c.cate_cd
+		AND YEAR(regdate) = #{cri.year}
+		AND MONTH(regdate) = #{cri.month}
+		ORDER BY a.regdate DESC, cate_cd ASC
+			LIMIT #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+
+<!-- 분기별 거래내역 -->
+	<select id="getQuarterTranHistory" resultType="tranHistoryDTO" parameterType="map">
+	SELECT a.*, c.cate_name FROM
+	(
+		SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment, revenue AS money
+		, item, regdate 
+ 		FROM income
+ 		WHERE mno = #{mno}
+							UNION ALL
+		SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
+		WHERE mno = #{mno}
+	) a, category c
+	where a.cate_cd = c.cate_cd
+		AND YEAR(regdate) = #{cri.year}
+		AND QUARTER(regdate) = #{cri.quarter}
+	ORDER BY a.regdate DESC, cate_cd ASC
+		LIMIT #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+
+<!-- 특정기간 거래내역 -->
+	<select id="getPeriodTranHistory" resultType="tranHistoryDTO" parameterType="map">
+	SELECT a.*, c.cate_name FROM
+	(
+		SELECT inc_no as num, mno, cate_cd , if(pay_code=0,'현금','카드') as payment, revenue as money
+		, item, regdate 
+ 		FROM income
+ 		WHERE mno = #{mno}
+								UNION ALL
+		SELECT out_no, mno, cate_cd, if(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
+		WHERE mno = #{mno}
+	) a, category c
+	where a.cate_cd = c.cate_cd
+	AND regdate between #{cri.startDate} AND #{cri.endDate}
+	order by a.regdate desc, cate_cd asc
+		LIMIT #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	
+<!-- 해당 회원 가계부 작성횟수 = mno + searchType + keyword -->
+	<select id="getTotalCount" parameterType="map" resultType="int">
+	select sum(total) 
+	from
+		(select count(*) AS total from income
+		where mno = #{mno}
+		<include refid="search"></include>
+				UNION
+		select count(*) from outlay
+		where mno = #{mno}
+		<include refid="search"></include>
+	) a
+	</select>
+
+
+	<sql id="search">
+		
+		<if test="searchType != null">
+			<if test="searchType == 'year'.toString()">
+				AND YEAR(regdate) = #{cri.year}			
+			</if>
+			<if test="searchType == 'month'.toString()">
+				AND YEAR(regdate) = #{cri.year}
+				AND MONTH(regdate) = #{cri.month}
+			</if>
+			<if test="searchType == 'quarter'.toString()">
+				AND YEAR(regdate) = #{cri.year}
+				AND QUARTER(regdate) = #{cri.quarter}
+			</if>
+			<if test="searchType == 'period'.toString()">
+			AND regdate BETWEEN #{cri.startDate} AND #{cri.endDate}
+			</if>
+		</if>
+	
+	</sql>
+
+
+
+
+</mapper>

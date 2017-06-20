@@ -4,7 +4,12 @@
 	"http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
+		<typeAlias type="org.moneybook.domain.IncomeVO" alias="incomeVO"/>
+		<typeAlias type="org.moneybook.domain.StatisticsVO" alias="statisticsVO"/>
+		<typeAlias type="org.moneybook.domain.OutlayVO" alias="outlayVO"/>
 		<typeAlias type="org.moneybook.domain.CategoryVO" alias="categoryVO"/>
+		<typeAlias type="org.moneybook.domain.TranHistoryDTO" alias="tranHistoryDTO" />
+		<typeAlias type="org.moneybook.domain.SearchCriteria" alias="searchCri" />
 	</typeAliases>
 
 </configuration>
