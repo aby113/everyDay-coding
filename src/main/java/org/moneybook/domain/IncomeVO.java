@@ -50,7 +50,7 @@ public class IncomeVO {
 		return regdate;
 	}
 	public void setRegdate(String regdate) {
-		this.regdate = regdate;
+			this.regdate = regdate.replace("-", "");
 	}
 	
 	

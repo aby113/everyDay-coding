@@ -47,10 +47,10 @@ public class OutlayVO {
 		this.item = item;
 	}
 	public String getRegdate() {
-		return regdate;
+		return this.regdate;
 	}
 	public void setRegdate(String regdate) {
-		this.regdate = regdate;
+		this.regdate = regdate.replace("-", "");
 	}
 	
 	

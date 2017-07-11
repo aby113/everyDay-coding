@@ -2,9 +2,10 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
-<html lang="en">
-
 <head>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <style media="screen">
 .wrap {
 	margin: 0px;
@@ -12,11 +13,11 @@
 	width: 2000px;
 	height: 2000px;
 	text-align: center;
-	background-color: gray;
+	background-color: rgba(238, 238, 238, 1);
 }
 
 .white_block {
-	margin-left: 200px;
+	margin-left: 100px;
 	margin-top: 10px;
 	padding: 10px;
 	width: 1000px;
@@ -113,7 +114,6 @@ table, th, td {
 <meta name="author" content="">
 
 <title>Jumbotron Template for Bootstrap</title>
-<script	src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <!-- Bootstrap core CSS -->
 <link href="/resources/bootstrap-3.3.2-dist/css/bootstrap.min.css"
 	rel="stylesheet">
@@ -172,18 +172,18 @@ table, th, td {
 		<div class="white_block">
 			<div class="nav">
 				<ul class="item">
-					<li><a href="#"><img src="/resources/imgs/exam.png">
+					<li><a href="/money/register"><img src="/resources/imgs/exam.png">
 							<p>거래입력</p> </a></li>
 					<li><a href="/money/list"><img
-							src="/resources/imgs/exam.png">
+							src="/resources/imgs/list.png">
 							<p>거래내역</p> </a></li>
-					<li><a href="#"><img src="/resources/imgs/exam.png">
+					<li><a href="#"><img src="/resources/imgs/income2.png">
 							<p>수익</p> </a></li>
-					<li><a href="#"><img src="/resources/imgs/exam.png">
+					<li><a href="#"><img src="/resources/imgs/outlay.png">
 							<p>비용</p> </a></li>
-					<li><a href="#"><img src="/resources/imgs/exam.png">
+					<li><a href="#"><img src="/resources/imgs/graph.png">
 							<p>비용수익</p> </a></li>
-					<li><a href="#"><img src="/resources/imgs/exam.png">
+					<li><a href="#"><img src="/resources/imgs/card.png">
 							<p>신용카드</p> </a></li>
 				</ul>
 			</div>

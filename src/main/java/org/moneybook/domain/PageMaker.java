@@ -1,5 +1,7 @@
 package org.moneybook.domain;
 
+import java.util.Map;
+
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -95,6 +97,17 @@ public class PageMaker {
 		return uriComponents.toUriString();
 	}
 
+	// cri + totalCount 받아서 초기화해준후 객체 리턴
+	public static PageMaker getPageMaker(Map<String, Object> paramMap, int totalCount){
+		// paramMap = mno + cri
+		PageMaker pageMaker = new PageMaker();
+		pageMaker.setCri((SearchCriteria)paramMap.get("cri"));
+		pageMaker.setTotalCount(totalCount);
+		
+		return pageMaker;
+	}
+	
+	
 	
 
 	@Override

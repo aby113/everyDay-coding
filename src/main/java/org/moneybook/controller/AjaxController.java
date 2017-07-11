@@ -1,12 +1,15 @@
 package org.moneybook.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.moneybook.domain.CategoryVO;
 import org.moneybook.domain.PageMaker;
 import org.moneybook.domain.SearchCriteria;
+import org.moneybook.service.CategoryService;
 import org.moneybook.service.TranHistoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,10 @@ public class AjaxController {
 	@Inject
 	private TranHistoryService tranHistoryService;
 	
+	@Inject
+	private CategoryService cateService;
+	
+	// 거래내역 = mno + cri
 	@RequestMapping(value="/moneybookList/{page}", method = RequestMethod.GET)
 	public ResponseEntity<Map<String, Object>> list(@PathVariable("page")Integer page)throws Exception{
 	
@@ -164,6 +171,22 @@ public class AjaxController {
 		return entity;
 	}
 	
+	// 카테고리 목록 응답
+	@RequestMapping(value="/getCategoryList", method = RequestMethod.GET)
+	public ResponseEntity<List<CategoryVO>> getCategoryList(CategoryVO cateVO)throws Exception{
+		ResponseEntity<List<CategoryVO>> entity = null;
+		try{
+			entity = new ResponseEntity<>(cateService.getCategory(), HttpStatus.OK);
+		}catch(Exception e){
+			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			e.printStackTrace();
+		}
+		return entity;
+	}
+	
+	
+	
+	
 	public PageMaker getPageMaker(Map<String, Object> paramMap)throws Exception{
 		// paramMap = mno + cri
 		PageMaker pageMaker = new PageMaker();
@@ -172,6 +195,11 @@ public class AjaxController {
 		
 		return pageMaker;
 	}
+	
+	
+	
+	
+	
 	
 	
 }

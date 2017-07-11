@@ -68,7 +68,8 @@
 
 	</ul>
 </nav>
-
+</div>
+</div>
 
 <c:import url="../include/footer.jsp" />
 <script>
