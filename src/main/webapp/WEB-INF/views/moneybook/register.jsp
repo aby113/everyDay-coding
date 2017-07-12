@@ -40,10 +40,8 @@
 		// 최초 진입시에 getPage호출
 		getPage("/ajax/moneybookList/1");
 		
-		// 버그 리스트 갱신 안됨
 		$("#addBtn").click(function(){
 			register();
-			getPage("/ajax/moneybookList/1");
 		});
 		
 		//getCateList();
@@ -91,7 +89,7 @@
 				success : function(msg){
 					//alert("글저장완료");
 					console.log("작성후 페이지호출");
-					//getPage("/ajax/moneybookList/1");					
+					getPage("/ajax/moneybookList/1");					
 				}
 				
 			});
