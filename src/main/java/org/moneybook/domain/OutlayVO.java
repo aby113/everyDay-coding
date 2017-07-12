@@ -9,6 +9,7 @@ public class OutlayVO {
 	private String item;
 	private String regdate;
 	private char pay_code;
+	private Integer money;
 	
 	public OutlayVO() {
 		// 결제코드 현금으로 초기화
@@ -75,11 +76,20 @@ public class OutlayVO {
 			this.pay_code = pay_code;
 		}
 
+		public Integer getMoney() {
+			return money;
+		}
+
+
+		public void setMoney(Integer money) {
+			this.cost = money;
+		}
+
 
 		@Override
 		public String toString() {
 			return "OutlayVO [out_no=" + out_no + ", mno=" + mno + ", cate_cd=" + cate_cd + ", cost=" + cost + ", item="
-					+ item + ", regdate=" + regdate + ", pay_code=" + pay_code + "]";
+					+ item + ", regdate=" + regdate + ", pay_code=" + pay_code + ", money=" + money + "]";
 		}
 	
 	

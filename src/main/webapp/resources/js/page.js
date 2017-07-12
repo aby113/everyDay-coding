@@ -3,6 +3,8 @@ function getPage(pageInfo) {
 	$.getJSON(pageInfo, function(data) {
 		// 페이지네이션 링크 ajax처리할때 어떤요청에대한 페이지요청인지
 		// 알아야되서 저장
+		console.log("ajax 페이지갱신");
+		console.log(data);
 		data.pageMaker.pageInfo = pageInfo.slice(0, -1);
 		console.log(data.pageMaker);
 		printData($("#list-template"), $("tbody"), data.list);
@@ -57,7 +59,6 @@ $(".pagination").on("click", "a", function(event) {
 });
 
 Handlebars.registerHelper("prettifyDate", function(timeValue) {
-	console.log("시간: " + timeValue);
 	var week = [ "(일)", "(월)", "(화)", "(수)", "(목)", "(금)", "(토)" ];
 	var year = timeValue.substring(0, 4);
 	var month = timeValue.substring(4, 6);

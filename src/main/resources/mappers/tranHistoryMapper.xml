@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			WHERE mno = #{mno}
 		) a, category c
 		WHERE a.cate_cd = c.cate_cd
-		ORDER BY a.regdate DESC, cate_cd ASC
+		ORDER BY a.regdate DESC, cate_cd ASC, a.num DESC
 		LIMIT #{cri.pageStart}, #{cri.perPageNum}
 	</select>
 

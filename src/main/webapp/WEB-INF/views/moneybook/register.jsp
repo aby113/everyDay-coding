@@ -39,6 +39,13 @@
 		$("#outlayList").html(createCateLink(cateObj.out_cateList));
 		// 최초 진입시에 getPage호출
 		getPage("/ajax/moneybookList/1");
+		
+		// 버그 리스트 갱신 안됨
+		$("#addBtn").click(function(){
+			register();
+			getPage("/ajax/moneybookList/1");
+		});
+		
 		//getCateList();
 		function cateListInit() {
 			$.each(category, function(key, value) {
@@ -56,12 +63,15 @@
 			var item = $("input[name=item]").val();
 			var regdate = $("input[name=regdate]").val();
 			var pay_code = $("select[name=pay_code]").val();
-			var money = $("#price").val();
-			var cate_cd = $("#cate_cd").val();
+			var cate_cd = $("input[name=cate_cd]").val();
 			var pageInfo = getPageInfo(cate_cd);
-			
+			var money = $("#price").val();
+			console.log("카테고리값: "+ cate_cd);
+			console.log("돈체크:"+money);
 			// 수익OR비용 여부에따라 동적으로 name 변경 AND 컴마제거
-			changeParamName($("input[name=money]"),	money, cate_cd);
+			changeMoneyName($("#moneyInp"),	money, cate_cd);
+			
+			
 			
 			$.ajax({
 				type : 'post',
@@ -71,9 +81,17 @@
 					"X-HTTP-Method-Override":"POST"
 				},
 				dataType : 'text',
-				data : JSON.stringify({}),
-				success : function(){
-					
+				data : JSON.stringify({
+					item : item,
+					regdate : regdate,
+					pay_code : pay_code,
+					cate_cd : cate_cd,
+					money : money
+				}),
+				success : function(msg){
+					//alert("글저장완료");
+					console.log("작성후 페이지호출");
+					//getPage("/ajax/moneybookList/1");					
 				}
 				
 			});
@@ -151,7 +169,6 @@
 		// 해당 value값에 컴마가 제거된 숫자가들어감
 		function changeMoneyName($target, money, cate_cd) {
 			var paramName = "cost";
-			var price = null;
 			// 수익 카테고리를 클릭햇는지 검사 
 			if(isIncome(cate_cd))paramName = "revenue";
 			// 수익 = revenue, 비용 = cost
@@ -189,7 +206,7 @@ div.listBox {
 <section>
 	<form class="registerFrm" action="/money/register" method="post">
 		<input type="hidden" name="cate_cd" value=""> <input
-			type="hidden" name="money" value="">
+			type="hidden" id="moneyInp" name="money" value="">
 		<div class="">
 			<p>날짜</p>
 			<p>
@@ -227,7 +244,7 @@ div.listBox {
 			<p>비용</p>
 			<p id="outlayList"></p>
 		</div>
-		<input type="submit" name="" value="전송">
+		<input type="button" id="addBtn" name="" value="전송">
 	</form>
 
 </section>
@@ -248,7 +265,7 @@ div.listBox {
 			<tr>
 				<th><input type="checkbox" id="fullCheck" name="" value=""></th>
 				<th>날짜</th>
-				<th>적요</th>
+				<th>아이템</th>
 				<th>금액</th>
 				<th>카테고리</th>
 				<th>비고</th>
