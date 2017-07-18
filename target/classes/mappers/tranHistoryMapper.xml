@@ -16,17 +16,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getTranHistory" resultType="tranHistoryDTO" parameterType="map">
 		SELECT a.*, c.cate_name FROM
 		(
-			SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment,
+			SELECT inc_no AS num, mno, cate_cd , pay_code, IF(pay_code=0,'현금','카드') AS payment,
 				revenue AS money, item, regdate
 			FROM income
 			WHERE mno = #{mno}
 									UNION ALL
-			SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate
+			SELECT out_no, mno, cate_cd, pay_code, IF(pay_code=0,'현금', '카드'), cost, item, regdate
 			FROM outlay
 			WHERE mno = #{mno}
 		) a, category c
 		WHERE a.cate_cd = c.cate_cd
-		ORDER BY a.regdate DESC, cate_cd ASC, a.num DESC
+		ORDER BY a.regdate DESC, a.num DESC, cate_cd ASC
 		LIMIT #{cri.pageStart}, #{cri.perPageNum}
 	</select>
 
@@ -34,12 +34,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getYearTranHistory" parameterType="map" resultType="tranHistoryDTO">
 	SELECT a.*, c.cate_name FROM
 	(
-		SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment, revenue AS money
+		SELECT inc_no AS num, mno, cate_cd , pay_code, IF(pay_code=0,'현금','카드') AS payment, revenue AS money
 		, item, regdate 
 		 FROM income
 		 WHERE mno = #{mno}
 									UNION ALL
-		SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
+		SELECT out_no, mno, cate_cd, pay_code, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
 		WHERE mno = #{mno}
 	) a, category c
 	WHERE a.cate_cd = c.cate_cd
@@ -52,12 +52,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getMonthTranHistory" parameterType="map" resultType="tranHistoryDTO">
 		SELECT a.*, c.cate_name FROM
 		(
-			SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment,
+			SELECT inc_no AS num, mno, cate_cd , pay_code, IF(pay_code=0,'현금','카드') AS payment,
 				revenue AS money, item, regdate
 			FROM income
 			WHERE mno = #{mno}
 									UNION ALL
-			SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate
+			SELECT out_no, mno, cate_cd, pay_code, IF(pay_code=0,'현금', '카드'), cost, item, regdate
 			FROM outlay
 			WHERE mno = #{mno}
 		) a, category c
@@ -72,12 +72,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getQuarterTranHistory" resultType="tranHistoryDTO" parameterType="map">
 	SELECT a.*, c.cate_name FROM
 	(
-		SELECT inc_no AS num, mno, cate_cd , IF(pay_code=0,'현금','카드') AS payment, revenue AS money
+		SELECT inc_no AS num, mno, cate_cd , pay_code, IF(pay_code=0,'현금','카드') AS payment, revenue AS money
 		, item, regdate 
  		FROM income
  		WHERE mno = #{mno}
 							UNION ALL
-		SELECT out_no, mno, cate_cd, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
+		SELECT out_no, mno, cate_cd, pay_code, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
 		WHERE mno = #{mno}
 	) a, category c
 	where a.cate_cd = c.cate_cd
@@ -91,12 +91,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getPeriodTranHistory" resultType="tranHistoryDTO" parameterType="map">
 	SELECT a.*, c.cate_name FROM
 	(
-		SELECT inc_no as num, mno, cate_cd , if(pay_code=0,'현금','카드') as payment, revenue as money
+		SELECT inc_no as num, mno, cate_cd , pay_code, IF(pay_code=0,'현금','카드') as payment, revenue as money
 		, item, regdate 
  		FROM income
  		WHERE mno = #{mno}
 								UNION ALL
-		SELECT out_no, mno, cate_cd, if(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
+		SELECT out_no, mno, cate_cd, pay_code, IF(pay_code=0,'현금', '카드'), cost, item, regdate FROM outlay
 		WHERE mno = #{mno}
 	) a, category c
 	where a.cate_cd = c.cate_cd

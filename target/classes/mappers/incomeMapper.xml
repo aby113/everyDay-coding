@@ -19,27 +19,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		(#{regdate}, #{item}, #{revenue}, #{cate_cd}, #{mno}, #{pay_code})
 	</insert>
 
-<!-- 입력된 통계정보가 없을때 -->
-	<insert id="insertIcStat" parameterType="statisticsVO">
-	insert into statistics
-		(mno, year, month, inc_amount)
-	values
-		(#{mno}, #{year}, #{month}, #{inc_amount})	
-	</insert>
-
-<!-- 통계 업데이트 [현금]-->
-	<update id="updateIcStat" parameterType="statisticsVO">
-	update statistics
-	set
-		inc_amount = inc_amount + #{inc_amount}
-	where 
-		mno = #{mno} AND year = #{year} AND month = #{month}
-	</update>
-
-
+<!-- 수익 레코드 삭제 -->
+	<delete id="multiDeleteIncome">
+	delete from income 
+	where inc_no in
+	<foreach collection="list" item="delDTO" open="(" close=")" separator=",">
+	#{delDTO.number}
+	</foreach>
 	
+	</delete>
 
-
+<!-- 가계부 수정 -->
+	<update id="updateIncome">
+	UPDATE income 
+	SET 
+		
+	
+	</update>
 
 
 

@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import org.moneybook.domain.Criteria;
 import org.moneybook.domain.SearchCriteria;
-import org.moneybook.domain.TranHistoryDTO;
+import org.moneybook.domain.dto.TranHistoryDTO;
 import org.moneybook.persistence.TranHistoryDAO;
 import org.springframework.stereotype.Service;
 

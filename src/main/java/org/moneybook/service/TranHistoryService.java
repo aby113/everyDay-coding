@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.moneybook.domain.Criteria;
 import org.moneybook.domain.SearchCriteria;
-import org.moneybook.domain.TranHistoryDTO;
+import org.moneybook.domain.dto.TranHistoryDTO;
 
 public interface TranHistoryService {
 

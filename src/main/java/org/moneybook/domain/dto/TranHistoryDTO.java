@@ -1,4 +1,4 @@
-package org.moneybook.domain;
+package org.moneybook.domain.dto;
 
 // 거래내역 DTO
 public class TranHistoryDTO {
@@ -6,6 +6,7 @@ public class TranHistoryDTO {
 	private Integer num;
 	private Integer mno;
 	private Integer cate_cd;
+	private char pay_code;
 	private String payment;
 	private Integer money;
 	private String item;
@@ -60,10 +61,18 @@ public class TranHistoryDTO {
 	public void setCate_name(String cate_name) {
 		this.cate_name = cate_name;
 	}
+	
+	public char getPay_code() {
+		return pay_code;
+	}
+	public void setPay_code(char pay_code) {
+		this.pay_code = pay_code;
+	}
 	@Override
 	public String toString() {
-		return "TranHistoryDTO [num=" + num + ", mno=" + mno + ", cate_cd=" + cate_cd + ", payment=" + payment
-				+ ", money=" + money + ", item=" + item + ", regdate=" + regdate + ", cate_name=" + cate_name + "]";
+		return "TranHistoryDTO [num=" + num + ", mno=" + mno + ", cate_cd=" + cate_cd + ", pay_code=" + pay_code
+				+ ", payment=" + payment + ", money=" + money + ", item=" + item + ", regdate=" + regdate
+				+ ", cate_name=" + cate_name + "]";
 	}
 	
 	

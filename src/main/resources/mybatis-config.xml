@@ -8,8 +8,9 @@
 		<typeAlias type="org.moneybook.domain.StatisticsVO" alias="statisticsVO"/>
 		<typeAlias type="org.moneybook.domain.OutlayVO" alias="outlayVO"/>
 		<typeAlias type="org.moneybook.domain.CategoryVO" alias="categoryVO"/>
-		<typeAlias type="org.moneybook.domain.TranHistoryDTO" alias="tranHistoryDTO" />
+		<typeAlias type="org.moneybook.domain.dto.TranHistoryDTO" alias="tranHistoryDTO" />
 		<typeAlias type="org.moneybook.domain.SearchCriteria" alias="searchCri" />
+		<typeAlias type="org.moneybook.domain.dto.MultiDelDTO" alias="delDTO" />
 	</typeAliases>
 
 </configuration>

@@ -1,5 +1,8 @@
 package org.moneybook.domain;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class OutlayVO {
 
 	private Integer out_no;
@@ -91,6 +94,17 @@ public class OutlayVO {
 			return "OutlayVO [out_no=" + out_no + ", mno=" + mno + ", cate_cd=" + cate_cd + ", cost=" + cost + ", item="
 					+ item + ", regdate=" + regdate + ", pay_code=" + pay_code + ", money=" + money + "]";
 		}
+
+
+	
+
+
+		
+
+
+
+
+		
 	
 	
 }

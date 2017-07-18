@@ -5,6 +5,7 @@ function getPage(pageInfo) {
 		// 알아야되서 저장
 		console.log("ajax 페이지갱신");
 		console.log(data);
+		currentPage = data.pageMaker.cri.page;
 		data.pageMaker.pageInfo = pageInfo.slice(0, -1);
 		console.log(data.pageMaker);
 		printData($("#list-template"), $("tbody"), data.list);
@@ -33,7 +34,7 @@ function printPaging(pageMaker, target) {
 	for (var i = pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
 		var pageInfo = pageMaker.pageInfo;
 		var strClass = pageMaker.cri.page == i ? 'class=active' : '';
-		str += "<li " + strClass + "><a href='" + i + "' data-page-info='"
+		str += "<li " + strClass + "><a href='#' data-page-info='"
 				+ pageInfo + "'>" + i + "</a></li>";
 	}
 
@@ -47,14 +48,13 @@ function printPaging(pageMaker, target) {
 }
 
 // 페이지 링크 클릭시 함수
-$(".pagination").on("click", "a", function(event) {
-
+$(".pagination").on("click", "li a", function(event) {
 	event.preventDefault();
 	var pageValue = $(this).text();
 	var pageInfo = $(this).data("pageInfo");
 	console.log("페이지정보 :" + pageInfo + pageValue);
 	// ex)/ajax/yearTranHistory/2017/+pageValue
-	getPage(pageInfo + pageValue);
+	//getPage(pageInfo + pageValue);
 
 });
 

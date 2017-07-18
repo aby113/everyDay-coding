@@ -7,13 +7,19 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.moneybook.domain.CategoryVO;
+import org.moneybook.domain.IncomeVO;
+import org.moneybook.domain.OutlayVO;
 import org.moneybook.domain.PageMaker;
 import org.moneybook.domain.SearchCriteria;
+import org.moneybook.domain.dto.MultiDelDTO;
 import org.moneybook.service.CategoryService;
+import org.moneybook.service.IncomeService;
+import org.moneybook.service.OutlayService;
 import org.moneybook.service.TranHistoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +33,13 @@ public class AjaxController {
 	
 	@Inject
 	private CategoryService cateService;
+	
+	@Inject
+	private IncomeService incomeService;
+	
+	@Inject
+	private OutlayService outlayService;
+	
 	
 	// 거래내역 = mno + cri
 	@RequestMapping(value="/moneybookList/{page}", method = RequestMethod.GET)
@@ -106,6 +119,7 @@ public class AjaxController {
 			entity = new ResponseEntity<>(resultMap, HttpStatus.OK);
 		
 		}catch(Exception e){
+			e.printStackTrace();
 			entity = new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
 		}
 		
@@ -137,6 +151,7 @@ public class AjaxController {
 			entity = new ResponseEntity<>(resultMap, HttpStatus.OK);
 		
 		}catch(Exception e){
+			e.printStackTrace();
 			entity = new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
 		}
 		
@@ -165,6 +180,7 @@ public class AjaxController {
 			entity = new ResponseEntity<>(resultMap, HttpStatus.OK);
 		
 		}catch(Exception e){
+			e.printStackTrace();
 			entity = new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
 		}
 		
@@ -184,8 +200,23 @@ public class AjaxController {
 		return entity;
 	}
 	
-	
-	
+	// 삭제 요청
+	@RequestMapping(value="/moneybook/remove", method = RequestMethod.POST)
+	public ResponseEntity<String> removeMoneyBook(@RequestBody MultiDelDTO dto)throws Exception{
+		ResponseEntity<String> entity = null;
+		
+		try{
+			incomeService.multiRemoveIncome(dto);
+			outlayService.multiRemoveOutlay(dto);
+			entity = new ResponseEntity<>("SUCCESS",HttpStatus.OK);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			entity = new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+		return entity;
+	}
 	
 	public PageMaker getPageMaker(Map<String, Object> paramMap)throws Exception{
 		// paramMap = mno + cri

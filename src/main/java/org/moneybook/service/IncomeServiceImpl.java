@@ -1,10 +1,14 @@
 package org.moneybook.service;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.moneybook.domain.IncomeVO;
 import org.moneybook.domain.StatisticsVO;
+import org.moneybook.domain.dto.MultiDelDTO;
 import org.moneybook.persistence.IncomeDAO;
+import org.moneybook.persistence.StatisticsDAOImpl;
 import org.moneybook.persistence.TranHistoryDAO;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +17,9 @@ public class IncomeServiceImpl implements IncomeService {
 
 	@Inject
 	private IncomeDAO incDAO;
+	
+	@Inject
+	private StatisticsDAOImpl statDAO;
 	
 	@Inject
 	private TranHistoryDAO tranDAO;
@@ -32,12 +39,26 @@ public class IncomeServiceImpl implements IncomeService {
 		// 존재하면 기존 통계테이블 값 update
 		if(result){
 			incDAO.insertIncome(incomeVO);
-			incDAO.updateIcStat(statVO);
+			statDAO.updateIcStat(statVO);
 			return;
 		}
 		// 존재하지않으면 값입력
 		incDAO.insertIncome(incomeVO);
-		incDAO.insertIcStat(statVO);
+		statDAO.insertIcStat(statVO);
+	}
+
+	// 다중 수익목록 삭제
+	@Override
+	public void multiRemoveIncome(MultiDelDTO dto) throws Exception {
+		// TODO Auto-generated method stub
+		System.out.println("incList실행");
+		List<MultiDelDTO> removeList = dto.getIncList();
+		if(removeList.size() == 0)return;
+		incDAO.multiDeleteIncome(dto.getIncList());
+		
+		for(MultiDelDTO removeDTO : removeList){
+					statDAO.subtractIncStat(removeDTO);
+		}
 	}
 
 	

@@ -54,4 +54,9 @@ public class HomeController {
 		return "moneybook/write";
 	}
 	
+	@RequestMapping(value="/sample/test", method = RequestMethod.GET)
+	public void test()throws Exception{
+		
+	}
+	
 }

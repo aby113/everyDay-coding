@@ -1,10 +1,13 @@
 package org.moneybook.persistence;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
 import org.moneybook.domain.IncomeVO;
 import org.moneybook.domain.StatisticsVO;
+import org.moneybook.domain.dto.MultiDelDTO;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,15 +25,9 @@ public class IncomeDAOImpl implements IncomeDAO {
 	}
 
 	@Override
-	public void insertIcStat(StatisticsVO statVO) throws Exception {
+	public void multiDeleteIncome(List<MultiDelDTO> removeList) throws Exception {
 		// TODO Auto-generated method stub
-		session.insert(namespace+".insertIcStat", statVO);
-	}
-
-	@Override
-	public void updateIcStat(StatisticsVO statVO) throws Exception {
-		// TODO Auto-generated method stub
-		session.update(namespace+".updateIcStat", statVO);
+		session.delete(namespace+".multiDeleteIncome", removeList);
 	}
 
 	

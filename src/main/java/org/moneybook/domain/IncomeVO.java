@@ -1,5 +1,8 @@
 package org.moneybook.domain;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IncomeVO {
 
 	private Integer inc_no;
@@ -10,6 +13,7 @@ public class IncomeVO {
 	private String regdate;
 	private char pay_code;
 	private Integer money;
+	
 	
 	public IncomeVO() {
 		// 현금으로 초기화
@@ -89,6 +93,12 @@ public class IncomeVO {
 		return "IncomeVO [inc_no=" + inc_no + ", mno=" + mno + ", cate_cd=" + cate_cd + ", revenue=" + revenue
 				+ ", item=" + item + ", regdate=" + regdate + ", pay_code=" + pay_code + ", money=" + money + "]";
 	}
+
+
+	
+
+	
+
 	
 	
 	

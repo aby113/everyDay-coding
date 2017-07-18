@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.moneybook.domain.Criteria;
-import org.moneybook.domain.TranHistoryDTO;
+import org.moneybook.domain.dto.TranHistoryDTO;
 import org.moneybook.service.TranHistoryService;
 
 public class TranServiceTest extends ConfigObject {

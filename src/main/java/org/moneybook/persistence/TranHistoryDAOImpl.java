@@ -9,7 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.moneybook.domain.Criteria;
 import org.moneybook.domain.SearchCriteria;
 import org.moneybook.domain.StatisticsVO;
-import org.moneybook.domain.TranHistoryDTO;
+import org.moneybook.domain.dto.TranHistoryDTO;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -112,11 +112,18 @@ public class MoneybookController {
 				this.outService.register(outlayVO);
 				entity = new ResponseEntity<>(HttpStatus.OK);
 			}catch(Exception e){
+				e.printStackTrace();
 				entity = new ResponseEntity(HttpStatus.BAD_REQUEST);
 			}
 			
 			return entity;
 		}
-	
+		
+	// 팝업
+	@RequestMapping(value="/money/pop", method = RequestMethod.GET)	
+	public String pop()throws Exception{
+		
+		return "/moneybook/modifyPop";
+	}
 
 }

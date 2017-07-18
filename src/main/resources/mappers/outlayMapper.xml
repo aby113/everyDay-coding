@@ -16,35 +16,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		 (#{regdate}, #{item}, #{cost}, #{cate_cd}, #{mno}, #{pay_code})
 	</insert>
 
-<!-- 통계입력[카드] -->
-	<insert id="insertCardStat" parameterType="statisticsVO">
-	insert into statistics
-		(mno, year, month, out_amount, card_amount)
-	values
-		(#{mno}, #{year}, #{month}, #{out_amount}, #{card_amount})	
-	</insert>
-
-<!-- 통계입력[현금] -->	
-	<insert id="insertOutStat" parameterType="statisticsVO">
-	insert into statistics
-		(mno, year, month, out_amount)
-	values
-		(#{mno}, #{year}, #{month}, #{out_amount})	
-	</insert>
-
-<!-- 통계수정[현금] OR 카드 -->
-<!-- 입력되엇을때 -->
-	<update id="updateOutStat" parameterType="statisticsVO">
-	UPDATE statistics
-	<set>
-		out_amount = out_amount + #{out_amount}
-		<if test="card_amount != '0'">,card_amount = card_amount + #{card_amount}</if>
-	</set>
-	WHERE	
-		mno = #{mno} AND year = #{year} AND month = #{month}
-	</update>
-
-
+<!-- 레코드 삭제 -->
+	<delete id="multiDeleteOutlay">
+	delete from outlay 
+	WHERE out_no in
+	<foreach collection="list" item="delDTO" open="(" close=")" separator=",">
+	#{delDTO.number}
+	</foreach>
+	
+	</delete>
 	
 	
 	

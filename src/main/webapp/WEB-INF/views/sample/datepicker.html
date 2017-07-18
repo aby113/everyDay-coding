@@ -11,13 +11,22 @@
   <script>
   $( function() {
     $( "#datepicker" ).datepicker();
+    
+    $("#datepicker2").datepicker();
   } );
   </script>
+  <style>
+  #id{
+  background: blue;
+  }
+  </style>
 </head>
 <body>
  
 <p>Date: <input type="text" id="datepicker"></p>
+<p>Date2: <input type="text" id="datepicker2"></p>
  
+ <p id="test">테스트1</p>
  
 </body>
 </html>
