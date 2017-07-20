@@ -3,6 +3,7 @@ package org.moneybook.persistence;
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
+import org.moneybook.domain.IncomeVO;
 import org.moneybook.domain.StatisticsVO;
 import org.moneybook.domain.dto.MultiDelDTO;
 import org.springframework.stereotype.Repository;
@@ -57,4 +58,31 @@ public class StatisticsDAOImpl implements StatisticsDAO{
 		session.update(namespace+".subtractOutStat", dto);
 	}
 
+	@Override
+	public void subtractIncStat(IncomeVO incomeVO) throws Exception {
+		// TODO Auto-generated method stub
+		session.update(namespace+".subtractOutStat", incomeVO);
+	}
+
+	@Override
+	public boolean isStatistics(IncomeVO incomeVO) throws Exception {
+		// TODO Auto-generated method stub
+		return (session.selectOne(namespace+".isStatistics", incomeVO)!=null?true:false);
+	}
+
+	@Override
+	public void subtractOutStat(StatisticsVO statVO) throws Exception {
+		// TODO Auto-generated method stub
+		session.update(namespace+".subtractOutStat2", statVO);
+	}
+
+	@Override
+	public boolean isStatistics(StatisticsVO statVO) throws Exception {
+		// TODO Auto-generated method stub
+		return (session.selectOne(namespace+".isStatistics2", statVO)!=null?true:false);
+	}
+
+	
+	
+	
 }

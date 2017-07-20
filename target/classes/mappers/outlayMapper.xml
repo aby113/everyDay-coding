@@ -23,12 +23,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<foreach collection="list" item="delDTO" open="(" close=")" separator=",">
 	#{delDTO.number}
 	</foreach>
-	
 	</delete>
 	
+	<update id="updateOutlay" parameterType="outlayVO">
+	UPDATE outlay 
+	SET 
+		regdate = #{regdate},
+		item = #{item},
+		cost = #{cost},
+		cate_cd = #{cate_cd}
+	WHERE
+		out_no = #{out_no}
+	</update>
 	
-	
-	
-	
+<!-- 비용 개별건 조회 -->
+	<select id="selectOutlay" resultType="outlayVO" parameterType="outlayVO">
+	SELECT out_no, mno, regdate, cost, pay_code
+	FROM outlay
+	WHERE out_no = #{out_no}
+	</select>
 
 </mapper>

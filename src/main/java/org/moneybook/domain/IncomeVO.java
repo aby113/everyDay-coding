@@ -3,6 +3,8 @@ package org.moneybook.domain;
 import java.util.Arrays;
 import java.util.List;
 
+import org.moneybook.domain.dto.ModifyDTO;
+
 public class IncomeVO {
 
 	private Integer inc_no;
@@ -44,6 +46,7 @@ public class IncomeVO {
 	}
 	public void setRevenue(Integer revenue) {
 		this.revenue = revenue;
+		this.money = revenue;
 	}
 	public String getItem() {
 		return item;
@@ -86,6 +89,21 @@ public class IncomeVO {
 	public void setMoney(Integer money) {
 		this.revenue = money;
 	}
+	
+	public void copyData(Object dataObj){
+		
+		if(dataObj instanceof ModifyDTO){
+			ModifyDTO dto = (ModifyDTO)dataObj;
+			this.inc_no = dto.getInc_no();
+			this.mno = dto.getMno();
+			this.regdate = dto.getRegdate();
+			this.item = dto.getItem();
+			this.revenue = dto.getRevenue();
+			this.cate_cd = dto.getCate_cd();
+		}
+	}
+	
+	
 
 
 	@Override

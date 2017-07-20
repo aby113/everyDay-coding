@@ -23,11 +23,11 @@ public class TranServiceTest extends ConfigObject {
 		Criteria cri = new Criteria();
 		cri.setPage(1);
 		cri.setPerPageNum(31);
-		List<TranHistoryDTO> list = tranService.getTranHistory(cri);
+		//List<TranHistoryDTO> list = tranService.getTranHistory(cri);
 		
-		for(TranHistoryDTO dto : list){
+		/*for(TranHistoryDTO dto : list){
 			System.out.println(dto.toString());
-		}
+		}*/
 	}
 	
 	@Test

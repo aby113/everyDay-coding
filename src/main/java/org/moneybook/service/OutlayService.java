@@ -8,6 +8,7 @@ public interface OutlayService {
 	public void register(OutlayVO outVO)throws Exception;
 	// 회원 다중 삭제
 	public void multiRemoveOutlay(MultiDelDTO dto)throws Exception;
-	
+	// 회원 수정
+	public void modifyOutlay(OutlayVO outVO)throws Exception;
 	
 }

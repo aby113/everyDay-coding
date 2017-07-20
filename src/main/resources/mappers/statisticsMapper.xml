@@ -5,6 +5,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="org.moneybook.mapper.StatisticsMapper">
 
+	<!-- 해당 통계정보 존재여부 체크 -->
+	<select id="isStatistics" resultType="int" parameterType="incomeVO">
+		SELECT mno FROM statistics
+		WHERE
+		mno = #{mno} AND year = #{year} AND month = #{month}
+	</select>
+<!-- 해당 통계정보 존재여부 체크 -->
+	<select id="isStatistics2" resultType="int" parameterType="statisticsVO">
+		SELECT mno FROM statistics
+		WHERE
+		mno = #{mno} AND year = #{year} AND month = #{month}
+	</select>
+
 	<!-- 입력된 통계정보가 없을때 -->
 	<insert id="insertIcStat" parameterType="statisticsVO">
 	insert into statistics
@@ -44,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	UPDATE statistics
 	<set>
 		out_amount = out_amount + #{out_amount}
-		<if test="card_amount != '0'">,card_amount = card_amount + #{card_amount}</if>
+		<if test="card_amount != null">,card_amount = card_amount + #{card_amount}</if>
 	</set>
 	WHERE	
 		mno = #{mno} AND year = #{year} AND month = #{month}
@@ -61,14 +74,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 
 <!-- 지출통계 수정 -->
-	<update id="subtractOutStat">
+	<update id="subtractOutStat" parameterType="delDTO">
 	UPDATE statistics 
 	<set>
 	 	out_amount = out_amount - #{money}
-		<if test="pay_code == '1'">,card_amount = card_amount - #{money}</if>
+		<if test="pay_code == '1'.toString()">,card_amount = card_amount - #{money}</if>
 	</set>
 	WHERE
 		mno = #{mno} AND year = #{year} AND month = #{month} 	
 	</update>
+	
+<!-- 지출통계 수정 -->
+	<update id="subtractOutStat2" parameterType="statisticsVO">
+	UPDATE statistics 
+	<set>
+	 	out_amount = out_amount - #{out_amount}
+		<if test="card_amount != null">,card_amount = card_amount - #{card_amount}</if>
+	</set>
+	WHERE
+		mno = #{mno} AND year = #{year} AND month = #{month} 	
+	</update>
+
+
 
 </mapper>

@@ -1,5 +1,7 @@
 package org.moneybook.domain;
 
+import org.moneybook.utils.ValidityCheck;
+
 public class StatisticsVO {
 
 	private Integer mno;
@@ -8,6 +10,7 @@ public class StatisticsVO {
 	private Integer inc_amount;
 	private Integer out_amount;
 	private Integer card_amount;
+	private String pay_code;
 	public Integer getMno() {
 		return mno;
 	}
@@ -44,11 +47,41 @@ public class StatisticsVO {
 	public void setCard_amount(Integer card_amount) {
 		this.card_amount = card_amount;
 	}
+	
+	public void copyData(Object dataObj) throws Exception{
+		
+		if(dataObj instanceof IncomeVO){
+			IncomeVO vo = (IncomeVO) dataObj;
+			this.mno = vo.getMno();
+			this.year = vo.getYear();
+			this.month = vo.getMonth();
+			this.inc_amount = vo.getRevenue();
+			
+		}else if(dataObj instanceof OutlayVO){
+			OutlayVO vo = (OutlayVO) dataObj;
+			// 카드면 카드총액 = 가격;
+			if(ValidityCheck.isCard(vo.getPay_code()))this.card_amount = vo.getCost();
+			this.mno = vo.getMno();
+			this.year = vo.getYear();
+			this.month = vo.getMonth();
+			this.out_amount = vo.getCost();
+			this.pay_code = ""+vo.getPay_code();
+		}
+		
+	}
+	public String getPay_code() {
+		return pay_code;
+	}
+	public void setPay_code(String pay_code) {
+		this.pay_code = pay_code;
+	}
 	@Override
 	public String toString() {
 		return "StatisticsVO [mno=" + mno + ", year=" + year + ", month=" + month + ", inc_amount=" + inc_amount
-				+ ", out_amount=" + out_amount + ", card_amount=" + card_amount + "]";
+				+ ", out_amount=" + out_amount + ", card_amount=" + card_amount + ", pay_code=" + pay_code + "]";
 	}
+	
+	
 	
 	
 

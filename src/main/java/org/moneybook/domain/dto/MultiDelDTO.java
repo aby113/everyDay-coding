@@ -11,7 +11,7 @@ public class MultiDelDTO {
 	private int number;
 	private Integer mno;
 	private String regdate;
-	private Character pay_code;
+	private String pay_code;
 	private Integer money;
 	
 	// 20170608 이라는 문자열이 들어오면 년도만 추출
@@ -66,11 +66,11 @@ public class MultiDelDTO {
 		this.regdate = regdate;
 	}
 
-	public Character getPay_code() {
+	public String getPay_code() {
 		return pay_code;
 	}
 
-	public void setPay_code(Character pay_code) {
+	public void setPay_code(String pay_code) {
 		this.pay_code = pay_code;
 	}
 
@@ -82,12 +82,7 @@ public class MultiDelDTO {
 		this.money = money;
 	}
 
-	@Override
-	public String toString() {
-		return "MultiDelDTO [incList=" + incList + ", outList=" + outList + ", number=" + number + ", mno=" + mno
-				+ ", regdate=" + regdate + ", pay_code=" + pay_code + ", money=" + money + "]";
-	}
-
+	
 	
 	
 

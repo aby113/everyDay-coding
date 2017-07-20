@@ -9,5 +9,5 @@ public interface IncomeService {
 	
 	public void multiRemoveIncome(MultiDelDTO dto)throws Exception;
 	
-	
+	public void modifyIncome(IncomeVO incomeVO)throws Exception;
 }

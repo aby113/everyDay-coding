@@ -11,11 +11,15 @@ import org.moneybook.domain.IncomeVO;
 import org.moneybook.domain.OutlayVO;
 import org.moneybook.domain.PageMaker;
 import org.moneybook.domain.SearchCriteria;
+import org.moneybook.domain.dto.MbDTO;
+import org.moneybook.domain.dto.ModifyDTO;
 import org.moneybook.domain.dto.MultiDelDTO;
 import org.moneybook.service.CategoryService;
 import org.moneybook.service.IncomeService;
 import org.moneybook.service.OutlayService;
 import org.moneybook.service.TranHistoryService;
+import org.moneybook.utils.BindingObject;
+import org.moneybook.utils.ValidityCheck;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -217,6 +221,34 @@ public class AjaxController {
 		
 		return entity;
 	}
+	
+	// 수정요청
+	@RequestMapping(value="/modify", method= RequestMethod.POST)
+	public ResponseEntity<String> testAjax(@RequestBody ModifyDTO dto)throws Exception{
+		ResponseEntity<String> entity = null;
+		dto.setMno(1);
+		System.out.println("값확인: " + dto.getRevenue());
+		try{
+			// revenue값 유무에따라 수익 or 비용 요청인지 구별
+			if(ValidityCheck.isIncome(dto.getRevenue())){
+				IncomeVO incomeVO = BindingObject.bindIncome(dto);
+				incomeService.modifyIncome(incomeVO);
+			}else{
+				OutlayVO outlayVO = BindingObject.bindOutlay(dto);
+				outlayService.modifyOutlay(outlayVO);
+			}
+			entity = new ResponseEntity("SUCCESS", HttpStatus.OK);
+		}catch(Exception e){
+			e.printStackTrace();
+			entity = new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		return entity;
+	}
+	
+	
+		
+	
+	
 	
 	public PageMaker getPageMaker(Map<String, Object> paramMap)throws Exception{
 		// paramMap = mno + cri

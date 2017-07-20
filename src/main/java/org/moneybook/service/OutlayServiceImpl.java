@@ -10,6 +10,8 @@ import org.moneybook.domain.dto.MultiDelDTO;
 import org.moneybook.persistence.OutlayDAO;
 import org.moneybook.persistence.StatisticsDAOImpl;
 import org.moneybook.persistence.TranHistoryDAO;
+import org.moneybook.utils.BindingObject;
+import org.moneybook.utils.ValidityCheck;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -60,11 +62,32 @@ public class OutlayServiceImpl implements OutlayService {
 		outDAO.multiDeleteOutlay(dto.getOutList());
 		// 삭제 목록만큼 통계 금액 감소
 		for(MultiDelDTO removeDTO : removeList){
-			System.out.println("년: " + removeDTO.getYear() + "/월 : " + removeDTO.getMonth());
-			System.out.println("/pay_code : " + removeDTO.getPay_code());
 			statDAO.subtractOutStat(removeDTO);
 		}
 		
 	}
 
+	// 수정 비용
+	@Override
+	public void modifyOutlay(OutlayVO newVO) throws Exception {
+		// 새로운 내용으로 수정한다음 통계도 수정
+		OutlayVO oldVO = outDAO.selectOutlay(newVO.getOut_no());
+		outDAO.updateOutlay(newVO);
+		// bindStatVO = Object객체를 받아서 StatVO객체에 데이터 복사후 리턴
+		statDAO.subtractOutStat(BindingObject.bindStatVO(oldVO));
+		StatisticsVO statVO = BindingObject.bindStatVO(newVO);
+		// 지출내역이 바뀌면 통계도 수정되어야함
+		if(statDAO.isStatistics(statVO)){
+			statDAO.updateOutStat(statVO);
+			return;
+		}else if(ValidityCheck.isCard(statVO.getPay_code())){
+				statDAO.insertCardStat(statVO);
+			return;
+		}
+		// 현금일경우
+		statDAO.insertOutStat(statVO);
+	}
+	
+	
+	
 }

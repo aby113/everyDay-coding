@@ -30,13 +30,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</delete>
 
 <!-- 가계부 수정 -->
-	<update id="updateIncome">
+	<update id="updateIncome" parameterType="incomeVO">
 	UPDATE income 
 	SET 
-		
-	
+		regdate = #{regdate},
+		item = #{item},
+		revenue = #{revenue},
+		cate_cd = #{cate_cd}
+	WHERE
+		inc_no = #{inc_no}
 	</update>
 
-
-
+<!-- 수익 레코드 조회 -->
+	<select id="selectIncome" resultType="incomeVO" parameterType="int" >
+	SELECT inc_no, mno, regdate, revenue
+	FROM income
+	WHERE inc_no = #{inc_no}
+	</select>
 </mapper>

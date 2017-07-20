@@ -30,6 +30,18 @@ public class OutlayDAOImpl implements OutlayDAO{
 		session.delete(namespace+".multiDeleteOutlay", removeList);
 	}
 
+	@Override
+	public void updateOutlay(OutlayVO outVO) throws Exception {
+		// TODO Auto-generated method stub
+		session.update(namespace+".updateOutlay", outVO);
+	}
+
+	@Override
+	public OutlayVO selectOutlay(Integer outVO) throws Exception {
+		// TODO Auto-generated method stub
+		return session.selectOne(namespace+".selectOutlay", outVO);
+	}
+
 
 	
 

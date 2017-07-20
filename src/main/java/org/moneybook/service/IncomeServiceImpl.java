@@ -10,6 +10,7 @@ import org.moneybook.domain.dto.MultiDelDTO;
 import org.moneybook.persistence.IncomeDAO;
 import org.moneybook.persistence.StatisticsDAOImpl;
 import org.moneybook.persistence.TranHistoryDAO;
+import org.moneybook.utils.BindingObject;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,13 +18,13 @@ public class IncomeServiceImpl implements IncomeService {
 
 	@Inject
 	private IncomeDAO incDAO;
-	
+
 	@Inject
 	private StatisticsDAOImpl statDAO;
-	
+
 	@Inject
 	private TranHistoryDAO tranDAO;
-	
+
 	@Override
 	public void registerIncome(IncomeVO incomeVO) throws Exception {
 
@@ -33,11 +34,11 @@ public class IncomeServiceImpl implements IncomeService {
 		statVO.setYear(incomeVO.getYear());
 		statVO.setMonth(incomeVO.getMonth());
 		statVO.setInc_amount(incomeVO.getRevenue());
-		
+
 		// 통계테이블에서 해당 회원 / 년 / 월 이 잇는지 확인
 		boolean result = tranDAO.isStatistics(statVO);
 		// 존재하면 기존 통계테이블 값 update
-		if(result){
+		if (result) {
 			incDAO.insertIncome(incomeVO);
 			statDAO.updateIcStat(statVO);
 			return;
@@ -53,16 +54,35 @@ public class IncomeServiceImpl implements IncomeService {
 		// TODO Auto-generated method stub
 		System.out.println("incList실행");
 		List<MultiDelDTO> removeList = dto.getIncList();
-		if(removeList.size() == 0)return;
+		if (removeList.size() == 0)
+			return;
 		incDAO.multiDeleteIncome(dto.getIncList());
-		
-		for(MultiDelDTO removeDTO : removeList){
-					statDAO.subtractIncStat(removeDTO);
+
+		for (MultiDelDTO removeDTO : removeList) {
+			statDAO.subtractIncStat(removeDTO);
 		}
 	}
 
+	@Override
+	public void modifyIncome(IncomeVO incomeVO) throws Exception {
+		// TODO Auto-generated method stub
+		IncomeVO oldVO = incDAO.selectIncome(incomeVO.getInc_no());
+		incDAO.updateIncome(incomeVO);
+		// 기존값을 통계에서 데이터 삭제
+		statDAO.subtractIncStat(oldVO);
+
+		// 통계테이블에서 해당 회원 / 년 / 월 이 잇는지 확인
+		boolean result = statDAO.isStatistics(incomeVO);
+		StatisticsVO statVO = BindingObject.bindStatVO(incomeVO);
+		// 존재하면 기존 통계테이블 값 update
+		if (result) {
+			statDAO.updateIcStat(statVO);
+			return;
+		}
+		// 존재하지않으면 값입력
+		statDAO.insertIcStat(statVO);
+	}
 	
 	
-	
-	
+
 }

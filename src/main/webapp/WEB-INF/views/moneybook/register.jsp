@@ -24,7 +24,8 @@
 			20100 : '세금/이자',
 			20110 : '기타비용'
 		};
-
+		var modalData = null;
+		var pageMaker = null;
 		var cateObj = {
 			inc_cateList : new Array(),
 			out_cateList : new Array()
@@ -45,39 +46,35 @@
 		$("#addBtn").click(function() {
 			register();
 		});
-
-		$("tbody tr td").on("click", ".modLink", function(event) {
+		// 수정 링크
+		 $("tbody").on("click", ".modLink", function(event) {
 			event.preventDefault();
+			event.stopPropagation();
 			console.log("modLink 실행");
-			$("#mymodal").modal('toggle');
-		});
+			console.log(modalData);
+			modalData = $(this).data();
+			setModalData(modalData);
+			$('.modal-price').number(true);
+			$(".bs-example-modal-lg").modal('toggle');
+		}); 
 
-		// test
+		// 다중삭제 처리
 		$("tbody").on("click", ".rmLink", function(event) {
 			event.preventDefault();
+			event.stopPropagation();
+			console.log(pageMaker);
+			var pageInfo = pageMaker.pageInfo;
+			var currPage = pageMaker.cri.page;
+			var removeList = getRemoveList($("tbody tr[class='success']"));
+			var rmMethod = function(msg) {
+				alert("삭제완료");
+				getPage(pageInfo+currPage);
+			}
+			var result = confirm("삭제 하시겟습니까?");
+			if(!result)return;
 			console.log("삭제 링크 클릭");
-			var incList = new Array();
-			var outList = new Array();
-
-			$("tbody tr[class='success']").each(function() {
-				// 수익이면 true 리턴
-				console.log("반복문 체크");
-				if (isIncome($(this).data("cate_cd"))) {
-					var incomeDTO = new IncomeDTO();
-					incomeDTO.init($(this).data());
-					incList.push(incomeDTO);
-				} else {
-					var outlayDTO = new OutlayDTO();
-					outlayDTO.init($(this).data());
-					outList.push(outlayDTO);
-				}
-
-			});
-
-			console.log("dto객체 확인");
-			console.log(incList);
-			console.log(outList);
-			$.ajax({
+			sendPostAjax("/ajax/moneybook/remove", removeList, rmMethod);
+			/* $.ajax({
 				type : "post",
 				url : "/ajax/moneybook/remove",
 				headers : {
@@ -85,17 +82,13 @@
 					"X-HTTP-Method-Override" : "POST"
 				},
 				dataType : 'text',
-				data : JSON.stringify({
-					incList : incList,
-					outList : outList
-				}),
+				data : JSON.stringify(removeList),
 				success : function(msg) {
 					alert("삭제완료");
-					console.log("currentPage :" + currentPage);
-					getPage("/ajax/moneybookList/"+currentPage);
+					getPage(pageInfo+currPage);
 				}
 
-			});
+			}); */
 
 		});
 
@@ -110,23 +103,7 @@
 			});
 		}
 
-		function sendAjax(url, dataObj, method) {
-
-			$.ajax({
-				type : "post",
-				url : url,
-				headers : {
-					"Content-Type" : "application/json",
-					"X-HTTP-Method-Override" : "POST"
-				},
-				dataType : 'text',
-				data : JSON.stringify(dataObj),
-				success : method
-
-			});
-
-		}
-
+		
 		// 전송
 		function register(pageInfo) {
 			var item = $("input[name=item]").val();
@@ -183,23 +160,44 @@
 		$("div.cateBox").on("click", "p a", function(event) {
 			event.preventDefault();
 			var linkValue = $(this).text();
-			var cateName = $("#cateInp").val(linkValue);
-			console.log(findCateName(linkValue));
-			$("input[name=cate_cd]").val(findCateName(linkValue));
-
+			$("#cateInp").val(linkValue);
+			console.log(findCateCode(linkValue));
+			$("input[name=cate_cd]").val(findCateCode(linkValue));
+			
 		});
-
-		// 카테고리 값으로 해당 키를 리턴
-		function findCateName(linkValue) {
-			var result = "";
-			$.each(category, function(key, value) {
-
-				if (linkValue === value) {
-					result = key;
-				}
-			});
-			return result;
-		}
+		
+		// 모달박스 카테고리 링크 클릭
+		$(".modal-content div.cateBox p[class$=List] a").click(function(event){
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			
+			var linkValue = $(this).text();
+			$(".modal-cate_gory").val(linkValue);
+			
+		});
+		
+		// 모달 수정버튼
+		$("div.modal-footer > button").click(function(event){
+			// 모달폼에잇는 데이터를 가져와서 VO객체에 셋팅해준다음 전송
+			// 카테고리에 따라 VO가 달라진다 getVoInstance(cate_cd);
+			console.log("모달 수정버튼 클릭");
+			// url, dataObj, method
+			var pageInfo = pageMaker.pageInfo;
+			var currPage = pageMaker.cri.page;
+			var modMethod = function(data){
+				alert(data);
+			}
+			modalData = getModalData();
+			var moneybookVO = getVoInstance(modalData.cateCd);
+			moneybookVO.copyData(modalData);
+			console.log(moneybookVO);
+			sendPostAjax("/ajax/modify", moneybookVO, modMethod);		
+			$(".bs-example-modal-lg").modal('hide');
+			getPage(pageInfo+currPage);
+		});
+		
+		
+		 
 
 		// 카테고리에 따라 url이 달라짐
 		function getPageInfo(cate_cd) {
@@ -246,13 +244,7 @@
 			$target.attr("name", paramName);
 			$target.val(uncomma(money));
 		}
-		// 수익항목인지 검사
-		function isIncome(cate_cd) {
-			if (cate_cd < 20000)
-				return true;
-
-			return false;
-		}
+		
 		// 컴마 제거메서드
 		function uncomma(price) {
 			return price.replace(/\,/g, '');
@@ -280,7 +272,6 @@
 
 		// 행을 클릭하면 행 color 변환
 		$("tbody").on("click", "tr", function() {
-
 			console.log("tr클릭");
 			var trObj = $(this);
 			var classValue = $(trObj).attr("class");
@@ -293,6 +284,32 @@
 			$(trObj).attr("class", result);
 		});
 
+		
+		
+		
+		function getRemoveList($target){
+			var incList = new Array();
+			var outList = new Array();
+			var removeList = {incList:incList, outList:outList};
+			$target.each(function() {
+				// 수익이면 true 리턴
+				console.log("반복문 체크");
+				if (isIncome($(this).data("cateCd"))) {
+					var incomeDTO = new IncomeDTO();
+					incomeDTO.init($(this).data());
+					incList.push(incomeDTO);
+				} else {
+					var outlayDTO = new OutlayDTO();
+					outlayDTO.init($(this).data());
+					outList.push(outlayDTO);
+				}
+
+			});
+			return	removeList;
+		}
+		
+		
+		
 		function IncomeDTO() {
 			this.number = 0, this.mno = 1, this.regdate = "", this.money = 0,
 					this.init = function(dataObj) {
@@ -394,6 +411,7 @@ div.listBox {
 				<th><input type="checkbox" class="fullCheck" name="" value=""></th>
 				<th>날짜</th>
 				<th>아이템</th>
+				<th>결제수단</th>
 				<th>금액</th>
 				<th>카테고리</th>
 				<th>비고</th>
@@ -423,33 +441,34 @@ div.listBox {
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
-				<h4 class="modal-title">Modal title</h4>
+				<h4 class="modal-title">Modal 수정</h4>
 			</div>
 			<form class="registerFrm" action="/money/register" method="post">
-				<input type="hidden" name="cate_cd" value=""> <input
-					type="hidden" id="moneyInp" name="money" value="">
+				<input type="hidden" class="modal-num" name="num"/>
+				<input type="hidden" class="modal-cate_cd" name="cate_cd" value=""> <input
+					type="hidden" class="modal-money" name="money" value="">
 				<div class="">
 					<p>날짜</p>
 					<p>
-						<input type="text" id="datePicker" name="regdate" value="">
+						<input type="text" class="modal-datePicker" id="datePicker" name="regdate" value="">
 					</p>
 				</div>
 				<div class="">
 					<p>아이템</p>
 					<p>
-						<input type="text" name="item" value="">
+						<input type="text" class="modal-item" name="item" value="">
 					</p>
 				</div>
 				<div class="">
 					<p>금액</p>
 					<p>
-						<input type="text" id="price" name="" value="">
+						<input type="text" class="modal-price" id="price" name="" value="">
 					</p>
 				</div>
 				<div class="">
 					<p>결제 수단</p>
 					<p>
-						<select name="pay_code">
+						<select class="modal-selectBox" name="pay_code">
 							<option value="0">현금</option>
 							<option value="1">카드</option>
 						</select>
@@ -458,7 +477,7 @@ div.listBox {
 				<div class="cateBox">
 					<p>카테고리</p>
 					<p>
-						<input type="text" id="cateInp" name="" value=""
+						<input type="text" class="modal-cate_gory" id="cateInp" name="" value=""
 							readonly="readonly">
 					</p>
 					<p>수익</p>
@@ -477,7 +496,7 @@ div.listBox {
 </div>
 
 
-
+<!-- data-toggle='modal' data-target='.bs-example-modal-lg'  -->
 
 
 
@@ -488,14 +507,15 @@ div.listBox {
 
 <script id="list-template" type="text/x-handlebars-template">
 {{#each .}}
-<tr data-num='{{num}}' data-money='{{money}}'  data-regdate='{{regdate}}' data-cate_cd='{{cate_cd}}' data-pay_code='{{pay_code}}' >
+<tr data-num='{{num}}' data-cate-name="{{cate_name}}" data-item="{{item}}" data-money='{{money}}'  data-regdate='{{regdate}}' data-cate-cd='{{cate_cd}}' data-pay-code='{{pay_code}}' >
 	<td><input type="checkbox" data-num='{{num}}' name="" value=""></td>
 	<td>{{prettifyDate regdate}}</td>
 	<td>{{item}}</td>
+	<td class="payment" data-pay-code="{{pay_code}}">{{payment}}</td>
 	<td class="money" data-cate-cd="{{cate_cd}}">{{prettifyMoney money}}</td>
 	<td>{{cate_name}}</td>
-	<td><a class="modLink" data-num='{{num}}' data-cate-cd='{{cate_cd}}' data-pay-code='{{pay_code}}' data-toggle='modal' data-target='.bs-example-modal-lg' href="#">수정</a>&nbsp;
-	<a class='rmLink' data-num='{{num}}' data-money='{{money}}' data-cate_cd='{{cate_cd}}' data-regdate='{{regdate}}' href="#">삭제</a></td>
+	<td><a class="modLink" data-num='{{num}}' data-cate-name="{{cate_name}}" data-item="{{item}}" data-money='{{money}}'  data-regdate='{{regdate}}' data-cate-cd='{{cate_cd}}' data-pay-code='{{pay_code}}' href="#">수정</a>&nbsp;
+	<a class='rmLink' data-num='{{num}}' data-money='{{money}}' data-cate-cd='{{cate_cd}}' data-regdate='{{regdate}}' href="#">삭제</a></td>
 </tr>
 {{/each}}
 </script>

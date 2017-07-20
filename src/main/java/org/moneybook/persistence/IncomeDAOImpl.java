@@ -30,6 +30,18 @@ public class IncomeDAOImpl implements IncomeDAO {
 		session.delete(namespace+".multiDeleteIncome", removeList);
 	}
 
+	@Override
+	public void updateIncome(IncomeVO incomeVO) throws Exception {
+		// TODO Auto-generated method stub
+		session.update(namespace+".updateIncome", incomeVO);
+	}
+
+	@Override
+	public IncomeVO selectIncome(Integer inc_no) throws Exception {
+		// TODO Auto-generated method stub
+		return session.selectOne(namespace+".selectIncome", inc_no);
+	}
+
 	
 
 }

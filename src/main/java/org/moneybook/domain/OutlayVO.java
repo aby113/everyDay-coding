@@ -3,6 +3,8 @@ package org.moneybook.domain;
 import java.util.Arrays;
 import java.util.List;
 
+import org.moneybook.domain.dto.ModifyDTO;
+
 public class OutlayVO {
 
 	private Integer out_no;
@@ -43,6 +45,7 @@ public class OutlayVO {
 	}
 	public void setCost(Integer cost) {
 		this.cost = cost;
+		this.money = cost;
 	}
 	public String getItem() {
 		return item;
@@ -88,6 +91,19 @@ public class OutlayVO {
 			this.cost = money;
 		}
 
+		public void copyData(Object dataObj){
+			
+			if(dataObj instanceof ModifyDTO){
+				ModifyDTO dto = (ModifyDTO)dataObj;
+				this.out_no = dto.getOut_no();
+				this.mno = dto.getMno();
+				this.regdate = dto.getRegdate();
+				this.item = dto.getItem();
+				this.cost = dto.getCost();
+				this.cate_cd = dto.getCate_cd();
+				this.pay_code = dto.getPay_code().charAt(0);
+			}
+		}
 
 		@Override
 		public String toString() {
