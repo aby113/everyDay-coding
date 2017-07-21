@@ -43,10 +43,23 @@
 		// 최초 진입시에 getPage호출
 		getPage("/ajax/moneybookList/1");
 
+		// 작성버튼
 		$("#addBtn").click(function() {
-			register();
+			// 카테고리값에 따라 url변경됨 ex)income,outlay
+			var pageInfo = getPageInfo(cate_cd);
+			var getPageURL = window.pageMaker.pageInfo;
+			var item = $("input[name=item]").val();
+			var regdate = $("input[name=regdate]").val();
+			var pay_code = $("select[name=pay_code]").val();
+			var cate_cd = $("input[name=cate_cd]").val();
+			var money = $("#price").val();
+			var paramObj = {item : item,	regdate : regdate, pay_code : pay_code
+				,cate_cd : cate_cd,	money : money};
+			register(pageInfo, paramObj, getPageURL);
 		});
-		// 수정 링크
+		
+		// 수정 링크 클릭
+		// 클릭된 행의 값을 모달에 셋팅하고 창을 띄움
 		 $("tbody").on("click", ".modLink", function(event) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -62,9 +75,9 @@
 		$("tbody").on("click", ".rmLink", function(event) {
 			event.preventDefault();
 			event.stopPropagation();
-			console.log(pageMaker);
-			var pageInfo = pageMaker.pageInfo;
-			var currPage = pageMaker.cri.page;
+			var pageInfo = window.pageMaker.pageInfo;
+			var currPage = window.pageMaker.cri.page;
+			console.log("다중삭제 클릭: "+pageInfo+currPage);
 			var removeList = getRemoveList($("tbody tr[class='success']"));
 			var rmMethod = function(msg) {
 				alert("삭제완료");
@@ -72,24 +85,7 @@
 			}
 			var result = confirm("삭제 하시겟습니까?");
 			if(!result)return;
-			console.log("삭제 링크 클릭");
 			sendPostAjax("/ajax/moneybook/remove", removeList, rmMethod);
-			/* $.ajax({
-				type : "post",
-				url : "/ajax/moneybook/remove",
-				headers : {
-					"Content-Type" : "application/json",
-					"X-HTTP-Method-Override" : "POST"
-				},
-				dataType : 'text',
-				data : JSON.stringify(removeList),
-				success : function(msg) {
-					alert("삭제완료");
-					getPage(pageInfo+currPage);
-				}
-
-			}); */
-
 		});
 
 		function cateListInit() {
@@ -104,44 +100,17 @@
 		}
 
 		
-		// 전송
-		function register(pageInfo) {
-			var item = $("input[name=item]").val();
-			var regdate = $("input[name=regdate]").val();
-			var pay_code = $("select[name=pay_code]").val();
-			var cate_cd = $("input[name=cate_cd]").val();
-			var pageInfo = getPageInfo(cate_cd);
-			var money = $("#price").val();
-			console.log("카테고리값: " + cate_cd);
-			console.log("돈체크:" + money);
-			// 수익OR비용 여부에따라 동적으로 name 변경 AND 컴마제거
-			//changeMoneyName($("#moneyInp"), money, cate_cd);
-
-			$.ajax({
-				type : 'post',
-				url : pageInfo,
-				headers : {
-					"Content-Type" : "application/json",
-					"X-HTTP-Method-Override" : "POST"
-				},
-				dataType : 'text',
-				data : JSON.stringify({
-					item : item,
-					regdate : regdate,
-					pay_code : pay_code,
-					cate_cd : cate_cd,
-					money : money
-				}),
-				success : function(msg) {
-					alert("글저장완료");
-					console.log("작성후 페이지호출");
-					getPage("/ajax/moneybookList/1");
-					$(".registerFrm")[0].reset();
-
-				}
-
-			});
-
+		// 전송 = 아이템,날짜,결제수단,카테고리,돈
+		function register(pageInfo, paramObj, getPageURL) {
+			// 성공시 실행될 메서드
+			var registerMethod = function(msg) {
+				alert("글저장완료");
+				console.log("작성후 페이지호출");
+				getPage(getPageURL+"1");
+				$(".registerFrm")[0].reset();
+			}	
+			// URL, 전송데이터, 성공시 실행될 메서드
+			sendPostAjax(pageInfo, paramObj, registerMethod);
 		}
 
 		$("#datePicker").datepicker(
@@ -176,18 +145,16 @@
 			
 		});
 		
-		// 모달 수정버튼
+		// 모달 수정버튼 : 모달폼에잇는 데이터를 가져와서 VO객체에 셋팅해준다음 전송
 		$("div.modal-footer > button").click(function(event){
-			// 모달폼에잇는 데이터를 가져와서 VO객체에 셋팅해준다음 전송
-			// 카테고리에 따라 VO가 달라진다 getVoInstance(cate_cd);
 			console.log("모달 수정버튼 클릭");
-			// url, dataObj, method
-			var pageInfo = pageMaker.pageInfo;
-			var currPage = pageMaker.cri.page;
+			var pageInfo = window.pageMaker.pageInfo;
+			var currPage = window.pageMaker.cri.page;
 			var modMethod = function(data){
 				alert(data);
 			}
 			modalData = getModalData();
+			// 카테고리에 따라 VO가 달라진다 = IncomeVO, OutlayVO
 			var moneybookVO = getVoInstance(modalData.cateCd);
 			moneybookVO.copyData(modalData);
 			console.log(moneybookVO);
@@ -270,23 +237,20 @@
 			$("input:checkbox").prop('checked', false);
 		});
 
-		// 행을 클릭하면 행 color 변환
+		// 행을 클릭하면 활성화:비활성화 분기
 		$("tbody").on("click", "tr", function() {
 			console.log("tr클릭");
 			var trObj = $(this);
 			var classValue = $(trObj).attr("class");
-			console.log("classValue : " + classValue);
-			if (classValue == undefined || classValue == "") {
-				result = "success";
-			} else {
-				result = "";
-			}
+			// 비활성화 됫으면 활성화 - 활성화상태면 비활성화
+			var result = classValue==null?"success":null;
 			$(trObj).attr("class", result);
 		});
 
+	
 		
-		
-		
+		// 삭제버튼을 클릭하면 선택된 행들을 가져와서
+		// list에 저장함 그후 list가담긴 removeList반환 ex)incList,outList 
 		function getRemoveList($target){
 			var incList = new Array();
 			var outList = new Array();
@@ -317,8 +281,8 @@
 						this.regdate = dataObj.regdate;
 						this.money = dataObj.money;
 					}
-		}
-		;
+		};
+		
 		function OutlayDTO() {
 			this.number = 1, this.mno = 1, this.regdate = "",
 					this.pay_code = '0', this.money = 0, this.init = function(
@@ -328,9 +292,7 @@
 						this.money = dataObj.money;
 						this.pay_code = dataObj.pay_code;
 					}
-		}
-		;
-
+		};
 	});
 </script>
 <style media="screen">
