@@ -7,41 +7,18 @@
 <script src="/resources/js/page.js"></script>
 <script type="text/javascript">
 	$(function() {
-		var category = {
-			10010 : '월급',
-			10020 : '상여금',
-			10030 : '펀드/주식',
-			10040 : '기타수익',
-			20010 : '식비',
-			20020 : '교통비',
-			20030 : '주거/통신',
-			20040 : '생활용품',
-			20050 : '경조사비',
-			20060 : '지식/문화',
-			20070 : '의복/미용',
-			20080 : '의료/건강',
-			20090 : '여가/유흥',
-			20100 : '세금/이자',
-			20110 : '기타비용'
-		};
+		// 최초 진입시에 getPage호출
+		getPage("/ajax/moneybookList/1");
+		getCateList("/ajax/getCategoryList");
 		var modalData = null;
 		var pageMaker = null;
-		var cateObj = {
-			inc_cateList : new Array(),
-			out_cateList : new Array()
-		};
 		
-		// 카테고리 리스트(inc_cateList,out_cateList) 초기화
-		cateListInit();
 		var checkboxArr = new Array();
 		$(".white_block").css("height", "456");
 		// 콤마찍기
 		$('#price').number(true);
 		// 수익and지출 링크 동적으로 생성
-		$(".incomeList").html(createCateLink(cateObj.inc_cateList));
-		$(".outlayList").html(createCateLink(cateObj.out_cateList));
-		// 최초 진입시에 getPage호출
-		getPage("/ajax/moneybookList/1");
+		
 
 		// 작성버튼
 		$("#addBtn").click(function() {
@@ -88,16 +65,7 @@
 			sendPostAjax("/ajax/moneybook/remove", removeList, rmMethod);
 		});
 
-		function cateListInit() {
-			$.each(category, function(key, value) {
-				// 수익일경우 true 리턴
-				if (isIncome(key)) {
-					cateObj.inc_cateList.push(value);
-				} else {
-					cateObj.out_cateList.push(value);
-				}
-			});
-		}
+		
 
 		
 		// 전송 = 아이템,날짜,결제수단,카테고리,돈
@@ -176,28 +144,14 @@
 
 		// 링크 + 카테고리를 동적으로생성
 		function createCateLink(categoryList) {
-
 			var str = "";
-			$.each(categoryList, function(key, value) {
-
-				str += "<a href='#'>" + value + "</a>";
+			console.log(categoryList);
+			$.each(categoryList, function() {
+				console.log("hi");
+				console.log(this);
+				str += "<a href='#'>" + this.cate_name + "</a>";
 			});
-
 			return str;
-		}
-
-		function getCateList() {
-			$.getJSON("/ajax/getCategoryList", function(data) {
-				$.each(data, function(key, value) {
-					if (isIncome(key)) {
-						inc_cateList.push(value);
-					} else {
-						out_cateList.push(value);
-					}
-
-				});
-
-			});
 		}
 
 		// 비용 OR 수익에따라 가격 param이름이 바뀜
@@ -466,7 +420,11 @@ div.listBox {
 
 
 
-
+<script id="cateLink-template" type="text/x-handlebars-template">
+{{#each .}}
+<a href='#' data-cate-cd='{{cate_cd}}'>{{cate_name}}</a>
+{{/each}}
+</script>
 <script id="list-template" type="text/x-handlebars-template">
 {{#each .}}
 <tr data-num='{{num}}' data-cate-name="{{cate_name}}" data-item="{{item}}" data-money='{{money}}'  data-regdate='{{regdate}}' data-cate-cd='{{cate_cd}}' data-pay-code='{{pay_code}}' >

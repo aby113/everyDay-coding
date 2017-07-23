@@ -11,8 +11,18 @@ function getPage(pageInfo) {
 		console.log(data.pageMaker);
 		printData($("#list-template"), $("tbody"), data.list);
 		printPaging(data.pageMaker, $(".pagination"));
+		// 돈 색변경: 수익/ 비용
+		changeMoneyColor($(".money"), "blue", "red");
+		// 결제수단 색변경: 카드/ 현금
+		changePaymentColor($(".payment"), "green", "blue");
 	});
+	
 
+}
+
+function printCateLink($template, cateList){
+	printData($template, $(".incomeList"), cateList.incList);
+	printData($template, $(".outlayList"), cateList.outList);
 }
 
 function printData(templateObj, target, dataArr) {
@@ -20,11 +30,9 @@ function printData(templateObj, target, dataArr) {
 	var template = Handlebars.compile(templateObj.html());
 	var html = template(dataArr);
 	target.html(html);
-	// 돈 색변경: 수익/ 비용
-	changeMoneyColor($(".money"), "blue", "red");
-	// 결제수단 색변경: 카드/ 현금
-	changePaymentColor($(".payment"), "green", "blue");
 }
+
+
 
 function printPaging(pageMaker, target) {
 	var str = "";
@@ -37,8 +45,8 @@ function printPaging(pageMaker, target) {
 	for (var i = pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
 		var pageInfo = pageMaker.pageInfo;
 		var strClass = pageMaker.cri.page == i ? 'class=active' : '';
-		str += "<li " + strClass + "><a href='#' data-page-info='"
-				+ pageInfo + "'>" + i + "</a></li>";
+		str += "<li " + strClass + "><a href='#' data-page-info='" + pageInfo
+				+ "'>" + i + "</a></li>";
 	}
 
 	if (pageMaker.next) {
@@ -50,7 +58,7 @@ function printPaging(pageMaker, target) {
 
 }
 
-//post방식 ajax메서드
+// post방식 ajax메서드
 function sendPostAjax(url, dataObj, method) {
 
 	$.ajax({
@@ -68,8 +76,6 @@ function sendPostAjax(url, dataObj, method) {
 
 }
 
-
-
 // 페이지 링크 클릭시 함수
 $(".pagination").on("click", "li a", function(event) {
 	event.preventDefault();
@@ -77,7 +83,7 @@ $(".pagination").on("click", "li a", function(event) {
 	var pageInfo = $(this).data("pageInfo");
 	console.log("페이지정보 :" + pageInfo + pageValue);
 	// ex)/ajax/yearTranHistory/2017/+pageValue
-	//getPage(pageInfo + pageValue);
+	// getPage(pageInfo + pageValue);
 
 });
 
@@ -99,7 +105,7 @@ Handlebars.registerHelper("prettifyMoney", function(moneyValue) {
 
 // 금액 색 적용하기
 function changeMoneyColor($target, incColor, outColor) {
-	
+
 	$target.each(function() {
 		// 카테고리가 수익이면 파랑, 비용이면 빨강
 		if ($(this).data("cateCd") < 20000) {
@@ -111,10 +117,10 @@ function changeMoneyColor($target, incColor, outColor) {
 	});
 }
 
-function changePaymentColor($target, cardColor, cashColor){
+function changePaymentColor($target, cardColor, cashColor) {
 	$target.each(function() {
 		// 카테고리가 수익이면 파랑, 비용이면 빨강
-		if (isCard($(this).data("payCode") )) {
+		if (isCard($(this).data("payCode"))) {
 			$(this).css("color", cardColor);
 		} else {
 			$(this).css("color", cashColor);
@@ -123,16 +129,16 @@ function changePaymentColor($target, cardColor, cashColor){
 	});
 }
 // 결제수단이 카드면 true리턴
-function isCard(pay_code){
-	if(pay_code == 1){
+function isCard(pay_code) {
+	if (pay_code == 1) {
 		return true;
 	}
-	
+
 	return false;
 }
 
 // 모달 데이터 셋팅
-function setModalData(dataObj){
+function setModalData(dataObj) {
 	// 번호,날짜,아이템,가격,카테고리이름,결제수단
 	$("input.modal-num").val(dataObj.num);
 	$(".modal-datePicker").val(dataObj.regdate);
@@ -143,40 +149,40 @@ function setModalData(dataObj){
 }
 
 // 모달폼 데이터 꺼내옴
-function getModalData(){
+function getModalData() {
 	var dataObj = {};
 	dataObj.num = $("input.modal-num").val();
 	dataObj.regdate = $(".modal-datePicker").val();
 	dataObj.item = $(".modal-item").val();
 	dataObj.money = $(".modal-price").val();
 	dataObj.cateCd = findCateCode($(".modal-cate_gory").val());
-	dataObj.payCode = $(".modal-selectBox option:selected").val(); 
+	dataObj.payCode = $(".modal-selectBox option:selected").val();
 	return dataObj;
 }
 
 // 결제수단에 따라 option 선택
-function setSelectBox(payCode){
-	
-	if(isCard(payCode)){
+function setSelectBox(payCode) {
+
+	if (isCard(payCode)) {
 		$(".modal-selectBox option:contains(카드)").attr("selected", "selected");
-	}else{
+	} else {
 		$(".modal-selectBox option:contains(현금)").attr("selected", "selected");
 	}
 
 }
 
-function getVoInstance(cate_cd){
-	
-	if(isIncome(cate_cd)){
+function getVoInstance(cate_cd) {
+
+	if (isIncome(cate_cd)) {
 		return new IncomeVO();
-	}else{
+	} else {
 		return new OutlayVO();
 	}
-	
+
 }
 
-function IncomeVO(){
-	
+function IncomeVO() {
+
 	this.inc_no = 0;
 	this.mno = 1;
 	this.cate_cd = 0;
@@ -184,7 +190,7 @@ function IncomeVO(){
 	this.revenue = 0;
 	this.item = "";
 	this.regdate = "";
-	this.copyData = function(dataObj){
+	this.copyData = function(dataObj) {
 		this.inc_no = dataObj.num;
 		this.cate_cd = dataObj.cateCd;
 		this.revenue = dataObj.money;
@@ -193,8 +199,8 @@ function IncomeVO(){
 	}
 }
 
-function OutlayVO(){
-	
+function OutlayVO() {
+
 	this.out_no = 0;
 	this.mno = 1;
 	this.cate_cd = 0;
@@ -202,7 +208,7 @@ function OutlayVO(){
 	this.cost = 0;
 	this.item = "";
 	this.regdate = "";
-	this.copyData = function(dataObj){
+	this.copyData = function(dataObj) {
 		this.out_no = dataObj.num;
 		this.cate_cd = dataObj.cateCd;
 		this.cost = dataObj.money;
@@ -212,7 +218,7 @@ function OutlayVO(){
 	}
 }
 
-//수익항목인지 검사
+// 수익항목인지 검사
 function isIncome(cate_cd) {
 	if (cate_cd < 20000)
 		return true;
@@ -220,7 +226,7 @@ function isIncome(cate_cd) {
 	return false;
 }
 
-//카테고리 값으로 해당 키를 리턴
+// 카테고리 값으로 해당 키를 리턴
 function findCateCode(cateName) {
 	var result = "";
 	$.each(category, function(key, value) {
@@ -231,22 +237,19 @@ function findCateCode(cateName) {
 	});
 	return result;
 }
+// 서버에서 카테고리 목록을 가져와 list페이지에 link생성
+function getCateList(url) {
+	var incList = new Array();
+	var outList = new Array();
+	$.getJSON(url, function(data) {
+		$.each(data, function() {
+				if (isIncome(this.cate_cd)) {
+					incList.push(this);
+				} else {
+					outList.push(this);
+				}
 
-var category = {
-		10010 : '월급',
-		10020 : '상여금',
-		10030 : '펀드/주식',
-		10040 : '기타수익',
-		20010 : '식비',
-		20020 : '교통비',
-		20030 : '주거/통신',
-		20040 : '생활용품',
-		20050 : '경조사비',
-		20060 : '지식/문화',
-		20070 : '의복/미용',
-		20080 : '의료/건강',
-		20090 : '여가/유흥',
-		20100 : '세금/이자',
-		20110 : '기타비용'
-	};
-
+			});
+		printCateLink($("#cateLink-template"), {incList:incList, outList:outList});
+	});
+}

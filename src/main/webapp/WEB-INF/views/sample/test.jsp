@@ -12,32 +12,36 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script>
 	$(function() {
-		var incObj = new Array();
-		var outObj = new Array();
-
-		$("button").click(function() {
-
-			for (var i = 0; i <= 10; i++) {
-				incObj.push(Math.floor(Math.random() * 100));
-				outObj.push(Math.floor(Math.random() * 100));
-			}
-
-			$.ajax({
-				type : "post",
-				url : "/ajax/moneybook/remove",
-				headers : {
-					"Content-Type" : "application/json",
-					"X-HTTP-Method-Override" : "POST"
-				},
-				data : JSON.stringify({
-					inc_numbers : incObj,
-					out_numbers : outObj
-				}),
-				success : function(msg) {
-					alert(msg);
-				}
+		var dataObj = null;
+		var incList = new Array();
+		var outList = new Array();
+		$("button").click(function(){
+			
+			$.getJSON("/ajax/getCategoryList/",function(data){
+			//	console.dir(data);
+				$.each(data, function(){
+					//console.log(this);
+					if(isIncome(this)){
+						incList.push(this);
+					}else{
+						outList.push(this);
+					}
+				});			
+			});g
+			
+			$.each(incList, function(){
+				console.log(this);
 			});
 		});
+		
+		function isIncome(paramObj){
+			if(paramObj.cate_cd >= 20000){
+				return true;
+			}
+			
+			return false;
+		}
+		
 	});
 </script>
 <title>Insert title here</title>

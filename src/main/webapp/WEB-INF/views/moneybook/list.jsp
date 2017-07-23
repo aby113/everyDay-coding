@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:import url="../include/header.jsp" />
-
+<script src="/resources/js/page.js"></script>
 <section>
 	<table class="table table-hover">
 		<colgroup>
@@ -18,7 +18,8 @@
 			<tr>
 				<th><input type="checkbox" id="fullCheck" name="" value=""></th>
 				<th>날짜</th>
-				<th>적요</th>
+				<th>아이템</th>
+				<th>결제수단</th>
 				<th>금액</th>
 				<th>카테고리</th>
 				<th>비고</th>
@@ -32,10 +33,11 @@
 					<td><input type="checkbox" name="" value=""></td>
 					<td><fmt:formatDate pattern="yyyy-MM-dd(E)" value="${regdate}" /></td>
 					<td>${tranHistoryVO.item}</td>
+					<td class="payment" data-pay-code="${tranHistoryVO.pay_code}">${tranHistoryVO.payment}</td>
 					<td class="money" data-cate-cd="${tranHistoryVO.cate_cd}"><fmt:formatNumber
 							value="${tranHistoryVO.money}" pattern="#,###" />
 					<td>${tranHistoryVO.cate_name}</td>
-					<td><a href="#">수정</a>&nbsp;<a href="#">삭제</a></td>
+					<td><a href="#" class="modLink">수정</a>&nbsp;<a href="#" class="rmLink">삭제</a></td>
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -76,8 +78,40 @@
 	$(function() {
 
 		var currentPage = '${pageMaker.cri.page}';
+		window.pageMaker = '${pageMaker}';
+		window.pageMaker.pageInfo = window.location.pathname;
+		window.pageMaker.cri.page = 1;
 		console.log("현재페이지: " + currentPage);
-		changeMoneyColor();
+		// 돈 색변경: 수익/ 비용
+		changeMoneyColor($(".money"), "blue", "red");
+		// 결제수단 색변경: 카드/ 현금
+		changePaymentColor($(".payment"), "green", "blue");
+		
+		
+		// 다중삭제 처리
+		$("tbody").on("click", ".rmLink", function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+			var target = $(this).parent("tr");
+			var pageInfo = window.pageMaker.pageInfo;
+			var currPage = window.pageMaker.cri.page;
+			console.log(target);
+			console.log("다중삭제 클릭: "+pageInfo+currPage);
+			/* var removeList = getRemoveList($("tbody tr[class='success']"));
+			var rmMethod = function(msg) {
+				alert("삭제완료");
+				getPage(pageInfo+currPage);
+			}
+			var result = confirm("삭제 하시겟습니까?");
+			if(!result)return;
+			sendPostAjax("/ajax/moneybook/remove", removeList, rmMethod); */
+		});
+		
+		
+		
+		
+		
+		
 		
 		// 전체선택란이 체크됫으면 전체체크 else 전체선택 해제
 		$("#fullCheck").on("click", function() {
@@ -93,20 +127,18 @@
 
 		});
 
-		// 금액 색 적용하기
-		function changeMoneyColor() {
-			$(".money").each(function() {
+		
 
-				// 카테고리가 수익이면 파랑, 비용이면 빨강
-				if ($(this).data("cateCd") < 20000) {
-					$(this).css("color", "blue");
-				} else {
-					$(this).css("color", "red");
-				}
-
-			});
-		}
-
+		// 행을 클릭하면 활성화:비활성화 분기
+		$("tbody").on("click", "tr", function() {
+			console.log("tr클릭");
+			var trObj = $(this);
+			var classValue = $(trObj).attr("class");
+			// 비활성화 됫으면 활성화 - 활성화상태면 비활성화
+			var result = classValue==null?"success":null;
+			$(trObj).attr("class", result);
+		});
+		
 		// 페이지 링크 클릭시 함수
 		$(".pagination").on("click", "a", function(event) {
 
@@ -160,51 +192,6 @@
 			getPage(getPageInfo("/ajax/monthTranHistory/", date));
 		});
 
-		function getPage(pageInfo) {
-
-			$.getJSON(pageInfo, function(data) {
-				// 페이지네이션 링크 ajax처리할때 어떤요청에대한 페이지요청인지
-				// 알아야되서 저장
-				data.pageMaker.pageInfo = pageInfo.slice(0, -1);
-				console.log(data.pageMaker);
-				printData($("#list-template"), $("tbody"), data.list);
-				printPaging(data.pageMaker, $(".pagination"));
-			});
-
-		}
-
-		function printData(templateObj, target, dataArr) {
-
-			var template = Handlebars.compile(templateObj.html());
-			var html = template(dataArr);
-			target.html(html);
-			// 돈 색변경
-			changeMoneyColor();
-		}
-
-		function printPaging(pageMaker, target) {
-			var str = "";
-
-			if (pageMaker.prev) {
-				str += "<li><a href='#' aria-label='Previous'>"
-						+ "<span aria-hidden='true'>&laquo;</span></a></li>"
-			}
-
-			for (var i = pageMaker.startPage, len = pageMaker.endPage; i <= len; i++) {
-				var pageInfo = pageMaker.pageInfo;
-				var strClass = pageMaker.cri.page == i ? 'class=active' : '';
-				str += "<li "+strClass+"><a href='"+i+"' data-page-info='"+pageInfo+"'>" + i + "</a></li>";
-			}
-
-			if (pageMaker.next) {
-				str += "<li><a href='#' aria-label='Next'><span aria-hidden='true'>"
-						+ "&raquo;</span></a></li>"
-			}
-
-			target.html(str);
-
-		}
-
 		// month, quarter값구할때 pageInfo값 파싱
 		function getPageInfo(searchItem, date) {
 			var dateArr = date.split("-");
@@ -237,14 +224,15 @@
 
 <script id="list-template" type="text/x-handlebars-template">
 {{#each .}}
-	
-<tr>
-	<td><input type="checkbox" name="" value=""></td>
+<tr data-num='{{num}}' data-cate-name="{{cate_name}}" data-item="{{item}}" data-money='{{money}}'  data-regdate='{{regdate}}' data-cate-cd='{{cate_cd}}' data-pay-code='{{pay_code}}' >
+	<td><input type="checkbox" data-num='{{num}}' name="" value=""></td>
 	<td>{{prettifyDate regdate}}</td>
 	<td>{{item}}</td>
+	<td class="payment" data-pay-code="{{pay_code}}">{{payment}}</td>
 	<td class="money" data-cate-cd="{{cate_cd}}">{{prettifyMoney money}}</td>
 	<td>{{cate_name}}</td>
-	<td><a href="#">수정</a>&nbsp;<a href="#">삭제</a></td>
+	<td><a class="modLink" data-num='{{num}}' data-cate-name="{{cate_name}}" data-item="{{item}}" data-money='{{money}}'  data-regdate='{{regdate}}' data-cate-cd='{{cate_cd}}' data-pay-code='{{pay_code}}' href="#">수정</a>&nbsp;
+	<a class='rmLink' data-num='{{num}}' data-money='{{money}}' data-cate-cd='{{cate_cd}}' data-regdate='{{regdate}}' href="#">삭제</a></td>
 </tr>
 {{/each}}
 </script>
